@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <title>CogniCheck - Website Detector</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo2.png') }}">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    :root {
+      --primary: #512da8;
+      --primary-dark: #3d2180;
+      --secondary: #6c63ff;
+      --accent: #ff6b6b;
+      --light: #f8f9fa;
+      --dark: #2d3748;
+      --success: #4cc9f0;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Animated Background */
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .floating-shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      animation: float 15s infinite linear;
+    }
+
+    .shape-1 {
+      width: 300px;
+      height: 300px;
+      top: 10%;
+      left: 5%;
+      animation-delay: 0s;
+    }
+
+    .shape-2 {
+      width: 200px;
+      height: 200px;
+      top: 60%;
+      right: 10%;
+      animation-delay: 5s;
+    }
+
+    .shape-3 {
+      width: 150px;
+      height: 150px;
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-20px) rotate(90deg); }
+      50% { transform: translateY(0) rotate(180deg); }
+      75% { transform: translateY(20px) rotate(270deg); }
+    }
+
+    /* Professional Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100%;
+      /* background: rgba(255, 255, 255, 0.95); */
+
+      backdrop-filter: blur(0px);
+      box-shadow: 2px 0 20px rgba(200, 205, 253, 0.6);
+      z-index: 1000;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-header {
+      padding: 25px 20px;
+      /* background: linear-gradient(135deg, var(--primary), var(--secondary)); */
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-header .logo {
+      color: white;
+      font-size: 30px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      padding: 20px 0;
+    }
+
+    .sidebar-section {
+      margin-bottom: 25px;
+    }
+
+    .sidebar-section h3 {
+      font-size: 25px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      /* color: var(--primary); */
+      color: white;
+      margin: 0 20px 15px;
+      font-weight: 600;
+      list-style: underline;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 5px;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      color:white;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      border-left:3px solid transparent;
+    }
+
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background: rgba(81, 45, 168, 0.3);
+      color: white;
+      border-left-color: var(--primary);
+    }
+
+    .sidebar-menu a i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .sidebar-footer {
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .sidebar-footer p {
+      font-size: 0.9rem;
+      color:white;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 0;
+      width: calc(100% - 280px);
+    }
+
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 60px;
+      animation: fadeInUp 1s ease-out;
+      padding: 80px 20px 0;
+    }
+
+    .page-header h1 {
+      font-size: 3.5rem;
+      margin-bottom: 15px;
+      font-weight: 800;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .page-header p {
+      font-size: 1.3rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Detector Container */
+    .detector-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 50px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      margin: 0 150px 40px;
+      margin-right: 3%;
+    }
+
+    .detector-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    /* URL Input Container */
+    .url-input-container {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+
+    .url-input {
+      width: 100%;
+      padding: 22px 60px 22px 25px;
+      border: 2px solid #e2e8f0;
+      border-radius: 15px;
+      font-size: 16px;
+      transition: all 0.4s ease;
+      outline: none;
+      background: #f8fafc;
+      font-weight: 500;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 2;
+    }
+
+    .url-input:focus {
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 8px 25px rgba(81, 45, 168, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 25px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 20px;
+      z-index: 3;
+      transition: all 0.3s ease;
+    }
+
+    .url-input:focus + .input-icon {
+      color: var(--primary);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    /* Scan Button */
+    .scan-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 15px;
+      padding: 0 40px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 25px rgba(81, 45, 168, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scan-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .scan-btn:hover::before {
+      left: 100%;
+    }
+
+    .scan-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(81, 45, 168, 0.4);
+    }
+
+    .scan-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .scan-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .scan-btn:disabled::before {
+      display: none;
+    }
+
+    .scan-btn .spinner {
+      display: none;
+    }
+
+    .scan-btn.scanning .spinner {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }
+
+    .scan-btn.scanning .btn-text {
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* URL Suggestions */
+    .url-suggestions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .suggestion-chip {
+      background: rgba(81, 45, 168, 0.1);
+      color: var(--primary);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+    }
+
+    .suggestion-chip:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(81, 45, 168, 0.3);
+    }
+
+    /* Results Section */
+    .results-container {
+      display: none;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .results-container.active {
+      display: block;
+    }
+
+    .security-status {
+      text-align: center;
+      padding: 40px;
+      border-radius: 20px;
+      margin-bottom: 40px;
+      background: var(--light);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .status-safe {
+      background: rgba(76, 201, 240, 0.1);
+      border: 2px solid var(--success);
+    }
+
+    .status-warning {
+      background: rgba(245, 158, 11, 0.1);
+      border: 2px solid var(--warning);
+    }
+
+    .status-danger {
+      background: rgba(239, 68, 68, 0.1);
+      border: 2px solid var(--danger);
+    }
+
+    .status-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+
+    .status-safe .status-icon {
+      color: var(--success);
+    }
+
+    .status-warning .status-icon {
+      color: var(--warning);
+    }
+
+    .status-danger .status-icon {
+      color: var(--danger);
+    }
+
+    .status-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .status-description {
+      font-size: 1.1rem;
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Security Details */
+    .security-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .detail-card {
+      background: var(--light);
+      padding: 30px;
+      border-radius: 15px;
+      border-left: 5px solid var(--primary);
+      transition: transform 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .detail-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .detail-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .detail-item:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    .detail-value {
+      font-weight: 500;
+    }
+
+    .value-safe {
+      color: var(--success);
+    }
+
+    .value-warning {
+      color: var(--warning);
+    }
+
+    .value-danger {
+      color: var(--danger);
+    }
+
+    /* Threat Indicators */
+    .threat-indicators {
+      margin-bottom: 40px;
+    }
+
+    .threat-indicators h2 {
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      color: var(--primary);
+      text-align: center;
+    }
+
+    .indicators-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .indicator {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .indicator:hover {
+      transform: translateY(-5px);
+    }
+
+    .indicator-icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+
+    .indicator-safe .indicator-icon {
+      color: var(--success);
+    }
+
+    .indicator-warning .indicator-icon {
+      color: var(--warning);
+    }
+
+    .indicator-danger .indicator-icon {
+      color: var(--danger);
+    }
+
+    .indicator h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+
+    .indicator p {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .action-btn.primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .action-btn.primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(81, 45, 168, 0.4);
+    }
+
+    .action-btn.secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .action-btn.secondary:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    /* Features Section */
+    .features-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 60px 50px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      margin-bottom: 40px;
+      backdrop-filter: blur(10px);
+      margin: 0 140px 40px;
+      margin-right: 3%;
+    }
+
+    .features-title {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .features-title h2 {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-weight: 800;
+    }
+
+    .features-title p {
+      font-size: 1.2rem;
+      color: var(--text);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .feature-card {
+      background: var(--light);
+      padding: 40px 30px;
+      border-radius: 20px;
+      text-align: center;
+      transition: all 0.4s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 25px;
+      color: white;
+      font-size: 2rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .feature-card p {
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    /* Footer */
+.footer {
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    padding: 60px 20px 30px;
+    margin-left: 400px;
+    width: calc(100% - 400px);
+    margin-top: auto; /* This pushes footer to bottom */
+    
+  }
+
+/* Update body to be a flex container */
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column; /* Add this */
+}
+
+/* Update main content to grow and push footer down */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 0;
+    width: calc(100% - 280px);
+}
+
+/* Footer Content Styles */
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 50px;
+}
+
+.footer-section h3 {
+    margin-bottom: 25px;
+    color: #a0aec0;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.footer-section p {
+    margin-bottom: 18px;
+    opacity: 0.8;
+    line-height: 1.6;
+}
+
+.footer-section a {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.footer-section a:hover {
+    opacity: 1;
+    transform: translateX(5px);
+    color: var(--secondary);
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.social-links a {
+    width: 45px;
+    height: 45px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin-bottom: 0;
+}
+
+.social-links a:hover {
+    background: var(--primary);
+    transform: translateY(-5px);
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    opacity: 0.7;
+}
+
+/* Responsive Design for Footer */
+@media (max-width: 1024px) {
+    .footer {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+    }
+    
+    .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+    }
+}
+
+@media (max-width: 768px) {
+    .footer {
+        margin-left: 0;
+        width: 100%;
+        padding: 40px 20px 20px;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: 30px 15px 15px;
+    }
+    
+    .footer-section h3 {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+    
+    .social-links a {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .footer-bottom {
+        margin-top: 40px;
+        padding-top: 20px;
+    }
+}
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 250px;
+      }
+      
+      .main-content {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+      }
+      
+      .footer {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .footer {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .sidebar-toggle {
+        display: flex;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(81, 45, 168, 0.3);
+        z-index: 1001;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      
+      .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .page-header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .url-input-container {
+        flex-direction: column;
+      }
+      
+      .scan-btn {
+        justify-content: center;
+        padding: 20px;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .action-btn {
+        justify-content: center;
+      }
+      
+      .detector-container, .features-section {
+        padding: 30px 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .detector-container, .features-section {
+        padding: 25px 20px;
+      }
+      
+      .sidebar-toggle {
+        top: 15px;
+        left: 15px;
+        width: 45px;
+        height: 45px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+  </div>
+
+  <!-- Professional Sidebar Navigation -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="{{url_for('home')}}" class="logo">
+        <i class="fas fa-shield-alt"></i>
+        <span>CogniCheck</span>
+      </a>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-section">
+        <h3>Main Navigation</h3>
+        <ul class="sidebar-menu">
+          <li><a href="{{url_for('home')}}"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="{{url_for('detector')}}" class="active"><i class="fas fa-globe"></i> Website Detector</a></li>
+          <li><a href="{{url_for('news_detector')}}"><i class="fas fa-newspaper"></i> News Detector</a></li>
+          <li><a href="{{url_for('phone')}}"><i class="fas fa-address-book"></i> PhoneBook Search</a></li>
+        </ul>
+      </div>
+
+       <div class="sidebar-section">
+        <h3>Website Details</h3>
+        <ul class="sidebar-menu">
+          <li><a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About</a></li>
+          <li><a href="{{ url_for('contact') }}"><i class="fas fa-address-card"></i> Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-footer">
+      
+      <ul class="sidebar-menu">
+          <li style="font-size: 25px;"><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt" style="font-size:25px;"></i> Logout</a></li>
+        </ul>
+    </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar Toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle" style="display: none;">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <div class="sidebar-overlay" id="sidebarOverlay" style="display: none;"></div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Page Header -->
+    <section class="page-header">
+      <h1>Website Security Detector</h1>
+      <p>Scan any website for security threats, malware, and vulnerabilities in real-time</p>
+    </section>
+
+    <!-- Detector Container -->
+    <div class="detector-container">
+      <!-- Phishing Detection Form -->
+     <!-- Phishing Detection Form -->
+<form method="POST" action="{{ url_for('detector') }}" id="phishingForm">
+  <div class="url-input-container">
+    <div class="input-wrapper">
+      <input type="text" class="url-input" id="urlInput" name="url" placeholder="Enter website URL"  required>
+      <i class="fas fa-link input-icon"></i>
+    </div>
+    <button type="submit" class="scan-btn" id="scanBtn">
+      <i class="fas fa-shield-alt"></i>
+      <span class="btn-text">Scan Website</span>
+      <i class="fas fa-spinner spinner"></i>
+    </button>
+  </div>
+</form>
+
+
+      <!-- URL Suggestions -->
+      <div class="url-suggestions">
+        <div class="suggestion-chip" data-url="https://google.com">google.com</div>
+        <div class="suggestion-chip" data-url="https://github.com">github.com</div>
+        <div class="suggestion-chip" data-url="https://wikipedia.org">wikipedia.org</div>
+        <div class="suggestion-chip" data-url="https://stackoverflow.com">stackoverflow.com</div>
+      </div>
+
+      <!-- Phishing Detection Result -->
+      {% if result %}
+      <div class="results-container active">
+        <div class="security-status {% if 'Phishing' in result %}status-danger{% else %}status-safe{% endif %}" id="securityStatus">
+          <div class="status-icon">
+            {% if 'Phishing' in result %}
+            <i class="fas fa-skull-crossbones"></i>
+            {% else %}
+            <i class="fas fa-shield-check"></i>
+            {% endif %}
+          </div>
+          <h2 class="status-title">{{ result }}</h2>
+          <p class="status-description" id="statusDescription">
+            {% if 'Phishing' in result %}
+            This website has been identified as a potential phishing threat. Avoid entering any personal information.
+            {% else %}
+            This website appears to be legitimate and safe to use.
+            {% endif %}
+          </p>
+          {% if method %}
+          <p><small>Detected by {{ method }}</small></p>
+          {% endif %}
+          {% if confidence %}
+          <p><small>Confidence: {{ confidence }}</small></p>
+          {% endif %}
+        </div>
+        
+        <div class="action-buttons">
+          <button class="action-btn primary" id="visitSiteBtn">
+            <i class="fas fa-external-link-alt"></i> Visit Website
+          </button>
+          <button class="action-btn secondary" id="newScanBtn">
+            <i class="fas fa-redo"></i> New Scan
+          </button>
+          <button class="action-btn secondary" id="shareReportBtn">
+            <i class="fas fa-share-alt"></i> Share Report
+          </button>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Results Section -->
+      <div class="results-container" id="resultsContainer">
+        <div class="security-status status-safe" id="securityStatus">
+          <div class="status-icon">
+            <i class="fas fa-shield-check"></i>
+          </div>
+          <h2 class="status-title">Website is Secure</h2>
+          <p class="status-description" id="statusDescription">This website has passed all security checks and appears to be safe to visit.</p>
+        </div>
+
+        <div class="security-details">
+          <div class="detail-card">
+            <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+            <div class="detail-item">
+              <span class="detail-label">Domain</span>
+              <span class="detail-value" id="domainValue">example.com</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">IP Address</span>
+              <span class="detail-value" id="ipValue">192.168.1.1</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Server Location</span>
+              <span class="detail-value" id="locationValue">United States</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">SSL Certificate</span>
+              <span class="detail-value value-safe" id="sslValue">Valid</span>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <h3><i class="fas fa-bug"></i> Security Analysis</h3>
+            <div class="detail-item">
+              <span class="detail-label">Malware Detected</span>
+              <span class="detail-value value-safe" id="malwareValue">No</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Phishing Risk</span>
+              <span class="detail-value value-safe" id="phishingValue">Low</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Blacklist Status</span>
+              <span class="detail-value value-safe" id="blacklistValue">Clean</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Vulnerabilities</span>
+              <span class="detail-value value-safe" id="vulnerabilitiesValue">None Found</span>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <h3><i class="fas fa-chart-bar"></i> Performance & Privacy</h3>
+            <div class="detail-item">
+              <span class="detail-label">Tracking Scripts</span>
+              <span class="detail-value value-warning" id="trackingValue">3 Detected</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Cookies</span>
+              <span class="detail-value" id="cookiesValue">Standard</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Load Time</span>
+              <span class="detail-value value-safe" id="loadTimeValue">1.2s</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Privacy Score</span>
+              <span class="detail-value value-safe" id="privacyValue">85/100</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="threat-indicators">
+          <h2>Threat Indicators</h2>
+          <div class="indicators-grid">
+            <div class="indicator indicator-safe">
+              <div class="indicator-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <h3>Malware Free</h3>
+              <p>No malicious software detected</p>
+            </div>
+            <div class="indicator indicator-safe">
+              <div class="indicator-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <h3>Secure Connection</h3>
+              <p>HTTPS with valid certificate</p>
+            </div>
+            <div class="indicator indicator-warning">
+              <div class="indicator-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <h3>Tracking Scripts</h3>
+              <p>Some analytics scripts detected</p>
+            </div>
+            <div class="indicator indicator-safe">
+              <div class="indicator-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <h3>Clean Reputation</h3>
+              <p>Not on any blacklists</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="action-btn primary" id="visitSiteBtn">
+            <i class="fas fa-external-link-alt"></i> Visit Website
+          </button>
+          <button class="action-btn secondary" id="newScanBtn">
+            <i class="fas fa-redo"></i> New Scan
+          </button>
+          <button class="action-btn secondary" id="shareReportBtn">
+            <i class="fas fa-share-alt"></i> Share Report
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <div class="features-title">
+        <h2>Advanced Security Features</h2>
+        <p>Comprehensive website analysis powered by AI and machine learning</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <h3>AI-Powered Detection</h3>
+          <p>Advanced machine learning algorithms that continuously learn and adapt to new threats in real-time.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <h3>Real-Time Monitoring</h3>
+          <p>24/7 surveillance of your digital infrastructure with instant alerts for suspicious activities.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3>Comprehensive Analytics</h3>
+          <p>Detailed reports and insights into your security posture with actionable recommendations.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <!-- <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About CogniCheck</h3>
+        <p>Leading cybersecurity solutions powered by artificial intelligence to protect businesses from digital threats.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h3>Resources</h3>
+        <a href="#">Blog</a>
+        <a href="#">Documentation</a>
+        <a href="#">API</a>
+        <a href="#">Security Reports</a>
+        <a href="#">Help Center</a>
+      </div>
+      <div class="footer-section">
+        <h3>Contact Info</h3>
+        <p><i class="fas fa-map-marker-alt"></i> 123 Security Ave, Tech City</p>
+        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+        <p><i class="fas fa-envelope"></i> info@cognicheck.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 CogniCheck. All rights reserved. | Privacy Policy | Terms of Service</p>
+    </div>
+  </footer> -->
+
+  <script>
+    // Mobile sidebar functionality
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('active');
+      sidebarOverlay.classList.toggle('active');
+      document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    }
+
+    // Show/hide mobile toggle based on screen size
+    function checkScreenSize() {
+      if (window.innerWidth <= 768) {
+        sidebarToggle.style.display = 'flex';
+        sidebarOverlay.style.display = 'block';
+        sidebar.classList.remove('active');
+      } else {
+        sidebarToggle.style.display = 'none';
+        sidebarOverlay.style.display = 'none';
+        sidebar.classList.add('active');
+      }
+    }
+
+    // Initial check
+    checkScreenSize();
+    
+    // Add event listeners for mobile
+    sidebarToggle.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    // Close sidebar when clicking on a link (mobile only)
+    document.querySelectorAll('.sidebar-menu a').forEach(link => {
+      link.addEventListener('click', function() {
+        if (window.innerWidth <= 768) {
+          toggleSidebar();
+        }
+      });
+    });
+
+    // Resize listener
+    window.addEventListener('resize', checkScreenSize);
+
+    // DOM Elements
+    const urlInput = document.getElementById('urlInput');
+    const scanBtn = document.getElementById('scanBtn');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const securityStatus = document.getElementById('securityStatus');
+    const statusDescription = document.getElementById('statusDescription');
+    const visitSiteBtn = document.getElementById('visitSiteBtn');
+    const newScanBtn = document.getElementById('newScanBtn');
+    const shareReportBtn = document.getElementById('shareReportBtn');
+    const suggestionChips = document.querySelectorAll('.suggestion-chip');
+    const phishingForm = document.getElementById('phishingForm');
+
+    // Initialize the page
+    function initPage() {
+      setupEventListeners();
+      setupUrlSuggestions();
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      scanBtn.addEventListener('click', startScan);
+      newScanBtn.addEventListener('click', resetScanner);
+      visitSiteBtn.addEventListener('click', visitWebsite);
+      shareReportBtn.addEventListener('click', shareReport);
+      
+      // Allow scanning with Enter key
+      urlInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          startScan();
+        }
+      });
+
+      // Real-time URL validation
+      urlInput.addEventListener('input', validateUrl);
+    }
+
+    // Setup URL suggestions
+    function setupUrlSuggestions() {
+      suggestionChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          urlInput.value = chip.getAttribute('data-url');
+          urlInput.focus();
+          validateUrl();
+        });
+      });
+    }
+
+    // Validate URL in real-time
+    function validateUrl() {
+      const url = urlInput.value.trim();
+      const isValid = isValidUrl(url) && url !== 'https://';
+      
+      if (isValid) {
+        urlInput.style.borderColor = '#4cc9f0';
+      } else if (url !== 'https://' && url !== '') {
+        urlInput.style.borderColor = '#f72585';
+      } else {
+        urlInput.style.borderColor = '#e2e8f0';
+      }
+    }
+
+    // Check if URL is valid
+    function isValidUrl(string) {
+      try {
+        const url = new URL(string);
+        return url.protocol === 'http:' || url.protocol === 'https:';
+      } catch (_) {
+        return false;
+      }
+    }
+
+    // Start website scan
+    function startScan() {
+      const url = urlInput.value.trim();
+      
+      if (!url || url === 'https://') {
+        alert('Please enter a valid website URL');
+        return;
+      }
+      
+      if (!isValidUrl(url)) {
+        alert('Please enter a valid URL (include http:// or https://)');
+        return;
+      }
+      
+      // Show scanning state
+      scanBtn.classList.add('scanning');
+      scanBtn.disabled = true;
+      
+      // Submit the form for phishing detection
+      phishingForm.submit();
+    }
+
+    // Complete scan and show results
+    function completeScan(url) {
+      // Update button state
+      scanBtn.classList.remove('scanning');
+      scanBtn.disabled = false;
+      
+      // Show results container
+      resultsContainer.classList.add('active');
+      
+      // Parse URL for display
+      const domain = new URL(url).hostname;
+      
+      // Update results with mock data (in real app, this would come from API)
+      updateResults(domain, url);
+      
+      // Scroll to results
+      resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Update results with data
+    function updateResults(domain, url) {
+      // Update basic information
+      document.getElementById('domainValue').textContent = domain;
+      document.getElementById('ipValue').textContent = generateMockIP();
+      document.getElementById('locationValue').textContent = generateMockLocation();
+      
+      // Update security analysis
+      const securityScore = Math.random();
+      if (securityScore > 0.7) {
+        setSecurityStatus('safe', 'This website has passed all security checks and appears to be safe to visit.');
+      } else if (securityScore > 0.3) {
+        setSecurityStatus('warning', 'This website has some security concerns. Proceed with caution.');
+      } else {
+        setSecurityStatus('danger', 'This website has serious security issues. Avoid visiting.');
+      }
+      
+      // Update detailed information
+      updateDetailedInfo(securityScore);
+      
+      // Set visit button URL
+      visitSiteBtn.setAttribute('data-url', url);
+    }
+
+    // Set security status
+    function setSecurityStatus(status, description) {
+      // Remove all status classes
+      securityStatus.classList.remove('status-safe', 'status-warning', 'status-danger');
+      
+      // Add appropriate status class
+      securityStatus.classList.add(`status-${status}`);
+      
+      // Update icon
+      const icon = securityStatus.querySelector('.status-icon i');
+      icon.className = status === 'safe' ? 'fas fa-shield-check' : 
+                      status === 'warning' ? 'fas fa-exclamation-triangle' : 
+                      'fas fa-skull-crossbones';
+      
+      // Update title
+      const title = securityStatus.querySelector('.status-title');
+      title.textContent = status === 'safe' ? 'Website is Secure' : 
+                         status === 'warning' ? 'Proceed with Caution' : 
+                         'Security Threat Detected';
+      
+      // Update description
+      statusDescription.textContent = description;
+    }
+
+    // Update detailed information
+    function updateDetailedInfo(securityScore) {
+      // SSL status
+      document.getElementById('sslValue').textContent = securityScore > 0.2 ? 'Valid' : 'Invalid';
+      document.getElementById('sslValue').className = securityScore > 0.2 ? 'detail-value value-safe' : 'detail-value value-danger';
+      
+      // Malware
+      const hasMalware = securityScore < 0.3;
+      document.getElementById('malwareValue').textContent = hasMalware ? 'Yes' : 'No';
+      document.getElementById('malwareValue').className = hasMalware ? 'detail-value value-danger' : 'detail-value value-safe';
+      
+      // Phishing risk
+      const phishingRisk = securityScore < 0.4 ? 'High' : securityScore < 0.7 ? 'Medium' : 'Low';
+      document.getElementById('phishingValue').textContent = phishingRisk;
+      document.getElementById('phishingValue').className = 
+        phishingRisk === 'High' ? 'detail-value value-danger' : 
+        phishingRisk === 'Medium' ? 'detail-value value-warning' : 
+        'detail-value value-safe';
+      
+      // Blacklist status
+      const isBlacklisted = securityScore < 0.25;
+      document.getElementById('blacklistValue').textContent = isBlacklisted ? 'Listed' : 'Clean';
+      document.getElementById('blacklistValue').className = isBlacklisted ? 'detail-value value-danger' : 'detail-value value-safe';
+      
+      // Vulnerabilities
+      const vulnerabilities = securityScore > 0.6 ? 'None Found' : securityScore > 0.4 ? 'Minor Issues' : 'Critical Issues';
+      document.getElementById('vulnerabilitiesValue').textContent = vulnerabilities;
+      document.getElementById('vulnerabilitiesValue').className = 
+        vulnerabilities === 'None Found' ? 'detail-value value-safe' : 
+        vulnerabilities === 'Minor Issues' ? 'detail-value value-warning' : 
+        'detail-value value-danger';
+      
+      // Tracking scripts
+      const trackingCount = Math.floor(Math.random() * 5);
+      document.getElementById('trackingValue').textContent = `${trackingCount} Detected`;
+      document.getElementById('trackingValue').className = trackingCount > 3 ? 'detail-value value-warning' : 'detail-value value-safe';
+      
+      // Cookies
+      document.getElementById('cookiesValue').textContent = 'Standard';
+      
+      // Load time
+      const loadTime = (Math.random() * 2 + 0.5).toFixed(1) + 's';
+      document.getElementById('loadTimeValue').textContent = loadTime;
+      
+      // Privacy score
+      const privacyScore = Math.floor(securityScore * 40 + 60);
+      document.getElementById('privacyValue').textContent = `${privacyScore}/100`;
+      document.getElementById('privacyValue').className = 
+        privacyScore > 80 ? 'detail-value value-safe' : 
+        privacyScore > 60 ? 'detail-value value-warning' : 
+        'detail-value value-danger';
+    }
+
+    // Generate mock IP address
+    function generateMockIP() {
+      return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+    }
+
+    // Generate mock location
+    function generateMockLocation() {
+      const locations = ['United States', 'Germany', 'United Kingdom', 'Canada', 'Japan', 'Australia', 'Netherlands', 'Singapore'];
+      return locations[Math.floor(Math.random() * locations.length)];
+    }
+
+    // Reset scanner for new scan
+    function resetScanner() {
+      urlInput.value = 'https://';
+      resultsContainer.classList.remove('active');
+      urlInput.focus();
+      validateUrl();
+    }
+
+    // Visit the scanned website
+    function visitWebsite() {
+      const url = visitSiteBtn.getAttribute('data-url');
+      if (url) {
+        window.open(url, '_blank');
+      }
+    }
+
+    // Share report
+    function shareReport() {
+      const domain = document.getElementById('domainValue').textContent;
+      const status = securityStatus.querySelector('.status-title').textContent;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: `Security Report for ${domain}`,
+          text: `According to CogniCheck, ${domain} is: ${status}`,
+          url: window.location.href
+        });
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        const shareText = `Security Report for ${domain}: ${status} - Checked with CogniCheck`;
+        navigator.clipboard.writeText(shareText).then(() => {
+          alert('Report copied to clipboard!');
+        });
+      }
+    }
+
+    // Initialize the page when loaded
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>

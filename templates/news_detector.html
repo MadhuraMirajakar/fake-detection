@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <title>CogniCheck - News Detector</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo2.png') }}">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+    * { 
+      margin:0; 
+      padding:0; 
+      box-sizing:border-box; 
+      font-family:'Montserrat',sans-serif; 
+    }
+    
+    :root {
+      --primary:#512da8; 
+      --primary-dark:#3d2180;
+      --secondary: #6c63ff;
+      --success:#4cc9f0; 
+      --warning:#f59e0b; 
+      --danger:#ef4444;
+      --light:#f8f9fa; 
+      --dark: #2d3748;
+      --muted:#666;
+    }
+
+    body {
+      background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      color: #333; 
+      line-height:1.6; 
+      overflow-x:hidden; 
+      min-height:100vh;
+      display: flex;
+    }
+
+    /* Animated Background */
+    .animated-bg { 
+      position: fixed; 
+      inset: 0; 
+      z-index:-1; 
+      overflow:hidden; 
+    }
+    
+    .floating-shape { 
+      position:absolute; 
+      border-radius:50%; 
+      background:rgba(255,255,255,0.08); 
+      animation:float 16s infinite linear; 
+    }
+    
+    .shape-1{ width:300px; height:300px; top:8%; left:4%; animation-delay:0s; }
+    .shape-2{ width:220px; height:220px; top:60%; right:8%; animation-delay:5s; }
+    .shape-3{ width:150px; height:150px; bottom:18%; left:18%; animation-delay:10s; }
+    
+    @keyframes float {
+      0%,100%{ transform:translateY(0) rotate(0deg); }
+      25%{ transform:translateY(-24px) rotate(90deg); }
+      50%{ transform:translateY(0) rotate(180deg); }
+      75%{ transform:translateY(24px) rotate(270deg); }
+    }
+
+    /* Professional Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100%;
+      /* background: rgba(26, 35, 50, 0.95); */
+      backdrop-filter: blur(10px);
+      box-shadow: 2px 0 20px rgba(200, 205, 253, 0.6);
+      z-index: 1000;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-header {
+      padding: 25px 20px;
+      background: transparent;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-header .logo {
+      color: white;
+      font-size: 30px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      padding: 20px 0;
+    }
+
+    .sidebar-section {
+      margin-bottom: 25px;
+    }
+
+    .sidebar-section h3 {
+      font-size: 25px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: white;
+      margin: 0 20px 15px;
+      font-weight: 600;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 5px;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background: rgba(81, 45, 168, 0.3);
+      color: white;
+      border-left-color: var(--primary);
+    }
+
+    .sidebar-menu a i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .sidebar-footer {
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .sidebar-footer p {
+      font-size: 0.9rem;
+      color: white;
+    }
+
+    /* Mobile Sidebar Toggle */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      width: 50px;
+      height: 50px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(81, 45, 168, 0.3);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 400px;
+      padding: 80px 20px 80px;
+      width: calc(100% - 400px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Detector Container */
+    .detector-container {
+      width: 120%;
+      max-width: 880px;
+      background: rgba(255,255,255,0.96);
+      border-radius: 18px;
+      padding: 75px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      margin-bottom: 40px;
+      margin-top: 40px;
+      margin-left: 50px;
+    }
+
+    .detector-title {
+      text-align: center;
+      margin-bottom: 24px;
+      color: var(--primary);
+    }
+
+    .detector-title h1 {
+      font-size: 2.4rem;
+      margin-bottom: 6px;
+    }
+
+    .detector-title p {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    /* Input */
+    .input-field {
+      width: 100%;
+      min-height: 150px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 2px solid #e8edf6;
+      font-size: 1rem;
+      resize: vertical;
+      transition: box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 6px 18px rgba(81,45,168,0.08);
+    }
+
+    .analyze-btn {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto 20px;
+      background: var(--primary);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 1.03rem;
+      font-weight: 700;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .analyze-btn:hover {
+      transform: translateY(-3px);
+      background: var(--primary-dark);
+    }
+
+    /* Loading */
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 18px;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 4px solid rgba(0,0,0,0.08);
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Result Box */
+    .result-container {
+      display: none;
+      margin-top: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+
+    .result-header {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      border-bottom: 1px solid #eef3fb;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+    }
+
+    .result-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+      transition: all .4s ease;
+    }
+
+    .result-title h3 {
+      font-size: 1.15rem;
+      margin-bottom: 6px;
+    }
+
+    .result-title p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    /* --- Circular Credibility Visualization --- */
+    .credibility-box {
+      text-align: center;
+      padding: 24px 0;
+      border-radius: 16px;
+      background: linear-gradient(180deg,#f9f9ff,#ffffff);
+      margin-bottom: 18px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+
+    .credibility-box h4 {
+      color: #333;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+
+    .score-ring {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto 12px;
+    }
+
+    .score-ring svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .bg-ring {
+      fill: none;
+      stroke: #e5e7eb;
+      stroke-width: 10;
+    }
+
+    .progress-ring {
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 339.292;
+      stroke-dashoffset: 339.292;
+      transition: stroke-dashoffset 1s ease-out, stroke 0.5s ease;
+    }
+
+    .score-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      font-weight: 800;
+      font-size: 1.6rem;
+      color: var(--primary);
+    }
+
+    .score-label {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    /* Lists */
+    .detail-item {
+      margin-top: 12px;
+    }
+
+    .detail-item h4 {
+      color: #444;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .detail-item ul {
+      list-style: none;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .detail-item li {
+      position: relative;
+      padding-left: 10px;
+      margin-bottom: 8px;
+    }
+
+    .detail-item li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+    }
+
+    /* Footer */
+    .footer {
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
+      padding: 60px 20px 30px;
+      margin-left: -850px;
+      width: calc(100% - 400px);
+      margin-top: 814px;
+    }
+
+    .footer-content {
+      max-width: 1250px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 50px;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 25px;
+      color: #a0aec0;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .footer-section p {
+      margin-bottom: 18px;
+      opacity: 0.8;
+      line-height: 1.6;
+    }
+
+    .footer-section a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .footer-section a:hover {
+      opacity: 1;
+      transform: translateX(5px);
+      color: var(--secondary);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .footer-social a {
+      width: 45px;
+      height: 45px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      margin-bottom: 0;
+    }
+
+    .footer-social a:hover {
+      background: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 25px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      opacity: 0.7;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 350px;
+      }
+      
+      .main-content {
+        margin-left: 350px;
+        width: calc(100% - 350px);
+      }
+      
+      .footer {
+        margin-left: 350px;
+        width: calc(100% - 350px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 400px;
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 80px 15px 60px;
+      }
+      
+      .footer {
+        margin-left: 0;
+        width: 100%;
+        padding: 40px 20px 20px;
+      }
+      
+      .sidebar-toggle {
+        display: flex;
+      }
+      
+      .sidebar-overlay {
+        display: block;
+      }
+      
+      .detector-title h1 {
+        font-size: 2rem;
+      }
+      
+      .detector-container {
+        padding: 25px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .detector-title h1 {
+        font-size: 1.8rem;
+      }
+      
+      .sidebar-toggle {
+        top: 15px;
+        left: 15px;
+        width: 45px;
+        height: 45px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+  </div>
+
+  <!-- Professional Sidebar Navigation -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="{{url_for('home')}}" class="logo">
+        <i class="fas fa-shield-alt"></i>
+        <span>CogniCheck</span>
+      </a>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-section">
+        <h3>Main Navigation</h3>
+        <ul class="sidebar-menu">
+          <li><a href="{{url_for('home')}}"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="{{url_for('detector')}}"><i class="fas fa-globe"></i> Website Detector</a></li>
+          <li><a href="{{url_for('news_detector')}}" class="active"><i class="fas fa-newspaper"></i> News Detector</a></li>
+          <li><a href="{{url_for('phone')}}"><i class="fas fa-address-book"></i> PhoneBook Search</a></li>
+        </ul>
+      </div>
+
+       <div class="sidebar-section">
+        <h3>Website Details</h3>
+        <ul class="sidebar-menu">
+          <li><a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About</a></li>
+          <li><a href="{{ url_for('contact') }}"><i class="fas fa-address-card"></i> Contact</a></li>
+        </ul>
+      </div>
+      
+      
+    </div>
+    
+      <div class="sidebar-footer">
+      <ul class="sidebar-menu">
+          <li style="font-size: 25px;"><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt" style="font-size:25px;"></i> Logout</a></li>
+        </ul>
+    </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar Toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <section class="detector-container">
+      <div class="detector-title">
+        <h1>News Detector</h1>
+        <p>Check the credibility and authenticity of news articles using our AI model.</p>
+      </div>
+
+      <textarea id="newsInput" class="input-field" placeholder="Paste the news article text here..."></textarea>
+      <button class="analyze-btn" onclick="analyzeNews()"><i class="fas fa-search"></i> Analyze News</button>
+
+      <div class="loading" id="loadingIndicator">
+        <div class="loading-spinner"></div>
+        <p style="text-align:center;color:var(--muted);">Analyzing news content...</p>
+      </div>
+
+      <div class="result-container" id="resultContainer">
+        <div class="result-header">
+          <div class="result-icon" id="resultIcon" style="background:var(--success);"><i class="fas fa-check"></i></div>
+          <div class="result-title" style="flex:1;">
+            <h3 id="resultTitle">Analysis Results</h3>
+            <p id="resultSummary">Detailed analysis of the news content</p>
+          </div>
+        </div>
+
+        <div class="credibility-box">
+          <h4>Credibility Assessment</h4>
+          <div class="score-ring">
+            <svg viewBox="0 0 120 120">
+              <circle class="bg-ring" cx="60" cy="60" r="54"></circle>
+              <circle id="progressRing" class="progress-ring" cx="60" cy="60" r="54"></circle>
+            </svg>
+            <div class="score-text" id="scoreText">--%</div>
+          </div>
+          <p class="score-label" id="scoreLabel">Awaiting Analysis</p>
+        </div>
+
+        <div class="detail-item">
+          <h4>Content Analysis</h4>
+          <ul id="contentAnalysis"></ul>
+        </div>
+
+        <div class="detail-item">
+          <h4>Recommendations</h4>
+          <ul id="recommendations"></ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <!-- <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About CogniCheck</h3>
+        <p>Leading cybersecurity solutions powered by artificial intelligence to protect businesses from digital threats.</p>
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="{{url_for('home')}}">Home</a>
+        <a href="{{url_for('detector')}}">Website Detector</a>
+        <a href="{{url_for('about')}}">About Us</a>
+        <a href="#">Pricing</a>
+        <a href="{{url_for('contact')}}">Contact</a>
+      </div>
+      <div class="footer-section">
+        <h3>Resources</h3>
+        <a href="#">Blog</a>
+        <a href="#">Documentation</a>
+        <a href="#">API</a>
+        <a href="#">Security Reports</a>
+        <a href="#">Help Center</a>
+      </div>
+      <div class="footer-section">
+        <h3>Contact Info</h3>
+        <p><i class="fas fa-map-marker-alt"></i> 123 Security Ave, Tech City</p>
+        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+        <p><i class="fas fa-envelope"></i> info@cognicheck.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 CogniCheck. All rights reserved. | Privacy Policy | Terms of Service</p>
+    </div>
+  </footer> -->
+
+  <script>
+    // Mobile sidebar functionality
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('active');
+      sidebarOverlay.classList.toggle('active');
+      document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    }
+
+    // Show/hide mobile toggle based on screen size
+    function checkScreenSize() {
+      if (window.innerWidth <= 768) {
+        sidebarToggle.style.display = 'flex';
+        sidebarOverlay.style.display = 'block';
+        sidebar.classList.remove('active');
+      } else {
+        sidebarToggle.style.display = 'none';
+        sidebarOverlay.style.display = 'none';
+        sidebar.classList.add('active');
+      }
+    }
+
+    // Close sidebar when clicking on a link (mobile only)
+    document.querySelectorAll('.sidebar-menu a').forEach(link => {
+      link.addEventListener('click', function() {
+        if (window.innerWidth <= 768) {
+          toggleSidebar();
+        }
+      });
+    });
+
+    // Add event listeners for mobile
+    sidebarToggle.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    // Initial check
+    checkScreenSize();
+
+    // Resize listener
+    window.addEventListener('resize', checkScreenSize);
+
+    // News Analysis Functionality
+    async function analyzeNews() {
+      const newsContent = document.getElementById('newsInput').value.trim();
+      if (!newsContent) return alert('Please enter the news content to analyze');
+
+      document.getElementById('loadingIndicator').style.display = 'block';
+      document.getElementById('resultContainer').style.display = 'none';
+
+      try {
+        const resp = await fetch("/predict_news", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: newsContent })
+        });
+        const result = await resp.json();
+        document.getElementById('loadingIndicator').style.display = 'none';
+        if (!resp.ok) return alert(result.error || "Prediction failed");
+        displayResults(result);
+      } catch (err) {
+        console.error(err);
+        document.getElementById('loadingIndicator').style.display = 'none';
+        alert("Server error. Please try again later.");
+      }
+    }
+
+    function displayResults(results) {
+      const title = results.title || "";
+      const summary = results.summary || "";
+      const score = results.credibility ?? 0;
+      const analysis = results.analysis || [];
+      const recommendations = results.recommendations || [];
+
+      document.getElementById('resultTitle').textContent = title;
+      document.getElementById('resultSummary').textContent = summary;
+
+      const iconBox = document.getElementById('resultIcon');
+      const iconEl = iconBox.querySelector('i');
+      if (title.toLowerCase().includes("real")) {
+        iconBox.style.background = "var(--success)";
+        iconEl.className = "fas fa-check";
+      } else if (title.toLowerCase().includes("fake")) {
+        iconBox.style.background = "var(--danger)";
+        iconEl.className = "fas fa-times";
+      } else {
+        iconBox.style.background = "var(--warning)";
+        iconEl.className = "fas fa-exclamation";
+      }
+
+      const ring = document.getElementById('progressRing');
+      const scoreText = document.getElementById('scoreText');
+      const scoreLabel = document.getElementById('scoreLabel');
+      const percentage = Math.max(0, Math.min(100, Math.round(score)));
+      const circumference = 2 * Math.PI * 54;
+      const offset = circumference - (percentage / 100) * circumference;
+      ring.style.strokeDashoffset = offset;
+      scoreText.textContent = `${percentage}%`;
+
+      let strokeColor;
+      if (percentage >= 80) {
+        strokeColor = 'var(--success)';
+        scoreLabel.textContent = 'Highly Credible';
+      } else if (percentage >= 60) {
+        strokeColor = 'var(--warning)';
+        scoreLabel.textContent = 'Moderately Credible';
+      } else {
+        strokeColor = 'var(--danger)';
+        scoreLabel.textContent = 'Low Credibility';
+      }
+      ring.style.stroke = strokeColor;
+      scoreText.style.color = strokeColor;
+
+      document.getElementById('contentAnalysis').innerHTML = analysis.map(p => `<li>${p}</li>`).join('');
+      document.getElementById('recommendations').innerHTML = recommendations.map(p => `<li>${p}</li>`).join('');
+
+      document.getElementById('resultContainer').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

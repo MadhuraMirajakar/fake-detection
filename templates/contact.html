@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <title>Contact - CogniCheck</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo2.png') }}">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    :root {
+      --primary: #512da8;
+      --primary-dark: #3d2180;
+      --primary-light: #7e57c2;
+      --secondary: #6c63ff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --light: #f8f9fa;
+      --dark: #2d3748;
+      --text: #4b5563;
+      --border: #e2e8f0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Animated Background */
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .floating-shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      animation: float 15s infinite linear;
+    }
+
+    .shape-1 {
+      width: 300px;
+      height: 300px;
+      top: 10%;
+      left: 5%;
+      animation-delay: 0s;
+    }
+
+    .shape-2 {
+      width: 200px;
+      height: 200px;
+      top: 60%;
+      right: 10%;
+      animation-delay: 5s;
+    }
+
+    .shape-3 {
+      width: 150px;
+      height: 150px;
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-20px) rotate(90deg); }
+      50% { transform: translateY(0) rotate(180deg); }
+      75% { transform: translateY(20px) rotate(270deg); }
+    }
+
+    /* Professional Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100%;
+      /* background: rgba(26, 35, 50, 0.95); */
+      backdrop-filter: blur(10px);
+      box-shadow: 2px 0 20px rgba(200, 205, 253, 0.6);
+      z-index: 1000;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-header {
+      padding: 25px 20px;
+      background: transparent;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-header .logo {
+      color: white;
+      font-size: 30px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      padding: 20px 0;
+    }
+
+    .sidebar-section {
+      margin-bottom: 25px;
+    }
+
+    .sidebar-section h3 {
+      font-size: 25px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: white;
+      margin: 0 20px 15px;
+      font-weight: 600;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 5px;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background: rgba(81, 45, 168, 0.3);
+      color: white;
+      border-left-color: var(--primary);
+    }
+
+    .sidebar-menu a i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .sidebar-footer {
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .sidebar-footer p {
+      font-size: 0.9rem;
+      color: white;
+    }
+
+    /* Mobile Sidebar Toggle */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      width: 50px;
+      height: 50px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(81, 45, 168, 0.3);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 400px;
+      padding: 80px 20px 80px;
+      max-width: 1400px;
+      width: calc(100% - 400px);
+      min-height: calc(100vh - 300px);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Page Header */
+    .page-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 60px;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .page-header h1 {
+      font-size: 3.5rem;
+      margin-bottom: 15px;
+      font-weight: 800;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .page-header p {
+      font-size: 1.3rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* Contact Container */
+    .contact-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    /* Contact Info */
+    .contact-info {
+      background: white;
+      border-radius: 25px;
+      padding: 60px 50px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .contact-info::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .info-title {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .info-subtitle {
+      color: var(--text);
+      margin-bottom: 50px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 30px;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      background: var(--light);
+    }
+
+    .info-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .info-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .info-content h3 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .info-content p {
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 5px;
+    }
+
+    .info-note {
+      text-align: center;
+      padding: 25px;
+      background: rgba(81, 45, 168, 0.05);
+      border-radius: 15px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .info-note h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .info-note p {
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Feedback Section */
+    .feedback-section {
+      background: white;
+      border-radius: 25px;
+      padding: 60px 50px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      margin-bottom: 60px;
+      position: relative;
+      overflow: hidden;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .feedback-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .feedback-title {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .feedback-subtitle {
+      color: var(--text);
+      margin-bottom: 50px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    /* Form Groups */
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 14px;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 15px 20px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      outline: none;
+      background: white;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(81, 45, 168, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23512da8' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 12px;
+    }
+
+    /* Rating System */
+    .rating-section {
+      margin-bottom: 30px;
+    }
+
+    .rating-title {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      color: var(--dark);
+      font-weight: 600;
+    }
+
+    .rating-stars {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .star {
+      font-size: 2rem;
+      color: #e2e8f0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .star:hover, .star.active {
+      color: #f59e0b;
+      transform: scale(1.1);
+    }
+
+    .rating-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    /* Checkbox */
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .checkbox-option input {
+      display: none;
+    }
+
+    .checkbox-custom {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .checkbox-custom i {
+      color: white;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .checkbox-option input:checked + .checkbox-custom {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .checkbox-option input:checked + .checkbox-custom i {
+      opacity: 1;
+    }
+
+    .checkbox-label {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    /* Form Buttons */
+    .form-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+      justify-content: center;
+    }
+
+    .submit-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 35px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(81, 45, 168, 0.3);
+    }
+
+    .submit-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(81, 45, 168, 0.4);
+    }
+
+    /* Success Message */
+    .success-message {
+      display: none;
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid var(--success);
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .success-message i {
+      font-size: 3rem;
+      color: var(--success);
+      margin-bottom: 15px;
+    }
+
+    .success-message h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: var(--success);
+    }
+
+    .success-message p {
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--dark);
+      color: white;
+      padding: 60px 20px 30px;
+      margin-left: 400px;
+      width: calc(100% - 400px);
+      margin-top: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 50px;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 25px;
+      color: #a0aec0;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .footer-section p {
+      margin-bottom: 18px;
+      opacity: 0.8;
+      line-height: 1.6;
+    }
+
+    .footer-section a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .footer-section a:hover {
+      opacity: 1;
+      transform: translateX(5px);
+      color: var(--secondary);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .footer-social a {
+      width: 45px;
+      height: 45px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      margin-bottom: 0;
+    }
+
+    .footer-social a:hover {
+      background: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 25px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      opacity: 0.7;
+    }
+
+    /* STANDARDIZED BUTTONS */
+    .nav-btn {
+      background: var(--primary);
+      color: white;
+      font-size: 12px;
+      padding: 10px 20px;
+      border: 2px solid var(--primary);
+      border-radius: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(81, 45, 168, 0.25);
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(81, 45, 168, 0.35);
+    }
+
+    .nav-btn.active {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    .nav-btn.outline {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .nav-btn.outline:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .nav-btn.outline.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .nav-btn:disabled {
+      background: #9ca3af;
+      border-color: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .nav-btn:disabled:hover {
+      transform: none;
+      box-shadow: 0 4px 12px rgba(156, 163, 175, 0.25);
+    }
+
+    .nav-btn.loading {
+      pointer-events: none;
+    }
+
+    .nav-btn.loading .btn-text {
+      visibility: hidden;
+    }
+
+    .nav-btn.loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin: -8px 0 0 -8px;
+      border: 2px solid transparent;
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .nav-btn.outline.loading::after {
+      border-top: 2px solid var(--primary);
+    }
+
+    .nav-btn.small {
+      font-size: 11px;
+      padding: 8px 16px;
+    }
+
+    .nav-btn.large {
+      font-size: 14px;
+      padding: 12px 24px;
+    }
+
+    .nav-btn i {
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-btn:hover i {
+      transform: scale(1.1);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 350px;
+      }
+      
+      .main-content {
+        margin-left: 350px;
+        width: calc(100% - 350px);
+        min-height: calc(100vh - 280px);
+      }
+      
+      .footer {
+        margin-left: 350px;
+        width: calc(100% - 350px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 400px;
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 80px 15px 60px;
+        min-height: calc(100vh - 250px);
+      }
+      
+      .footer {
+        margin-left: 0;
+        width: 100%;
+        padding: 40px 20px 20px;
+      }
+      
+      .sidebar-toggle {
+        display: flex;
+      }
+      
+      .sidebar-overlay {
+        display: block;
+      }
+      
+      .page-header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .contact-info, .feedback-section {
+        padding: 40px 30px;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page-header h1 {
+        font-size: 2rem;
+      }
+      
+      .sidebar-toggle {
+        top: 15px;
+        left: 15px;
+        width: 45px;
+        height: 45px;
+      }
+      
+      .main-content {
+        min-height: calc(100vh - 220px);
+      }
+      
+      .contact-info, .feedback-section {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+  </div>
+
+  <!-- Professional Sidebar Navigation -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="{{url_for('home')}}" class="logo">
+        <i class="fas fa-shield-alt"></i>
+        <span>CogniCheck</span>
+      </a>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-section">
+        <h3>Main Navigation</h3>
+        <ul class="sidebar-menu">
+          <li><a href="{{url_for('home')}}"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="{{url_for('detector')}}"><i class="fas fa-globe"></i> Website Detector</a></li>
+          <li><a href="{{url_for('news_detector')}}"><i class="fas fa-newspaper"></i> News Detector</a></li>
+          <li><a href="{{url_for('phone')}}"><i class="fas fa-newspaper"></i> PhoneBook Search</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>Website Details</h3>
+        <ul class="sidebar-menu">
+          <li><a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About</a></li>
+          <li><a href="{{ url_for('contact') }}"><i class="fas fa-address-card"></i> Contact</a></li>
+        </ul>
+      </div>
+      
+      <!-- <div class="sidebar-section">
+        <h3>User Account</h3>
+        <ul class="sidebar-menu">
+          <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+      </div> -->
+    </div>
+    <div class="sidebar-footer">
+      
+      <ul class="sidebar-menu">
+          <li style="font-size: 25px;"><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt" style="font-size:25px;"></i> Logout</a></li>
+        </ul>
+    </div>
+    <!-- <div class="sidebar-footer">
+      <p>&copy; 2025 CogniCheck. All rights reserved.</p>
+    </div> -->
+  </div>
+
+  <!-- Mobile Sidebar Toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Page Header -->
+    <section class="page-header">
+      <h1>Contact Us</h1>
+      <p>Get in touch with our team for questions, support, or partnership opportunities</p>
+    </section>
+
+    <!-- Contact Information -->
+    <div class="contact-container">
+      <div class="contact-info">
+        <h2 class="info-title">Get in Touch</h2>
+        <p class="info-subtitle">Multiple ways to reach our team - we're here to help</p>
+        
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="info-content">
+              <h3>Visit Us</h3>
+              <p>SGBIT<br>Shivabasav Nagar <br>Belgaum</p>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div class="info-content">
+              <h3>Call Us</h3>
+              <p>+919741207665<br>+919342705500<br>+919110426670<br>+916360534418</p>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div class="info-content">
+              <h3>Email Us</h3>
+              <p>beereshmuragannavar@gmail.com<br>madhuramirajakar@gmail.com</p>
+            </div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-comments"></i>
+            </div>
+            <div class="info-content">
+              <h3>Live Chat</h3>
+              <p>Available 24/7 for technical support and urgent inquiries</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="info-note">
+          <h3>Quick Response Guarantee</h3>
+          <p>We pride ourselves on quick response times. Most inquiries are answered within 2 hours during business hours, and all messages receive a response within 24 hours. For urgent matters, use our live chat or call us directly.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Feedback Section -->
+    <div class="feedback-section">
+      <h2 class="feedback-title">Share Your Feedback</h2>
+      <p class="feedback-subtitle">Help us improve CogniCheck by sharing your experience</p>
+      
+      <form id="feedbackForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="feedbackName">Your Name</label>
+            <input type="text" id="feedbackName" class="form-input" placeholder="Name" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="feedbackEmail">Your Email</label>
+            <input type="email" id="feedbackEmail" class="form-input" placeholder="Email" required>
+          </div>
+        </div>
+        
+        <div class="rating-section">
+          <div class="rating-title">How would you rate your overall experience?</div>
+          <div class="rating-stars" id="ratingStars">
+            <span class="star" data-rating="1">★</span>
+            <span class="star" data-rating="2">★</span>
+            <span class="star" data-rating="3">★</span>
+            <span class="star" data-rating="4">★</span>
+            <span class="star" data-rating="5">★</span>
+          </div>
+          <div class="rating-labels">
+            <span>Poor</span>
+            <span>Excellent</span>
+          </div>
+          <input type="hidden" id="ratingValue" value="0">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="feedbackCategory">Feedback Category</label>
+          <select id="feedbackCategory" class="form-select">
+            <option value="" disabled selected>Select a category</option>
+            <option value="usability">Usability</option>
+            <option value="features">Features</option>
+            <option value="performance">Performance</option>
+            <option value="support">Customer Support</option>
+            <option value="pricing">Pricing</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="feedbackMessage">Your Feedback *</label>
+          <textarea id="feedbackMessage" class="form-textarea" placeholder="Please share your thoughts, suggestions, or issues..." required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <div class="checkbox-group">
+            <label class="checkbox-option">
+              <input type="checkbox" id="contactPermission">
+              <span class="checkbox-custom">
+                <i class="fas fa-check"></i>
+              </span>
+              <span class="checkbox-label">I give permission to contact me regarding this feedback</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-buttons">
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-star"></i>
+            Submit Feedback
+          </button>
+        </div>
+      </form>
+      
+      <!-- Success Message -->
+      <div class="success-message" id="successMessage">
+        <i class="fas fa-check-circle"></i>
+        <h3>Feedback Submitted Successfully!</h3>
+        <p>Thank you for your valuable feedback. We appreciate your input and will use it to improve our services.</p>
+        <button class="submit-btn" onclick="resetFeedbackForm()">
+          <i class="fas fa-plus"></i>
+          Submit More Feedback
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <!-- <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About CogniCheck</h3>
+        <p>Leading cybersecurity solutions powered by artificial intelligence to protect businesses from digital threats.</p>
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="{{url_for('home')}}">Home</a>
+        <a href="{{url_for('detector')}}">Website Detector</a>
+        <a href="{{url_for('about')}}">About Us</a>
+        <a href="#">Pricing</a>
+        <a href="{{url_for('contact')}}">Contact</a>
+      </div>
+      <div class="footer-section">
+        <h3>Resources</h3>
+        <a href="#">Blog</a>
+        <a href="#">Documentation</a>
+        <a href="#">API</a>
+        <a href="#">Security Reports</a>
+        <a href="#">Help Center</a>
+      </div>
+      <div class="footer-section">
+        <h3>Contact Info</h3>
+        <p><i class="fas fa-map-marker-alt"></i> 123 Security Ave, Tech City</p>
+        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+        <p><i class="fas fa-envelope"></i> info@cognicheck.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 CogniCheck. All rights reserved. | Privacy Policy | Terms of Service</p>
+    </div>
+  </footer> -->
+
+  <script>
+    // Mobile sidebar functionality
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('active');
+      sidebarOverlay.classList.toggle('active');
+      document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    }
+
+    // Show/hide mobile toggle based on screen size
+    function checkScreenSize() {
+      if (window.innerWidth <= 768) {
+        sidebarToggle.style.display = 'flex';
+        sidebarOverlay.style.display = 'block';
+        sidebar.classList.remove('active');
+      } else {
+        sidebarToggle.style.display = 'none';
+        sidebarOverlay.style.display = 'none';
+        sidebar.classList.add('active');
+      }
+    }
+
+    // Star rating functionality
+    const stars = document.querySelectorAll('.star');
+    const ratingValue = document.getElementById('ratingValue');
+    
+    stars.forEach(star => {
+      star.addEventListener('click', function() {
+        const rating = this.getAttribute('data-rating');
+        ratingValue.value = rating;
+        
+        // Update star appearance
+        stars.forEach(s => {
+          if (s.getAttribute('data-rating') <= rating) {
+            s.classList.add('active');
+          } else {
+            s.classList.remove('active');
+          }
+        });
+      });
+      
+      // Hover effect
+      star.addEventListener('mouseover', function() {
+        const rating = this.getAttribute('data-rating');
+        stars.forEach(s => {
+          if (s.getAttribute('data-rating') <= rating) {
+            s.style.color = '#f59e0b';
+          } else {
+            s.style.color = '#e2e8f0';
+          }
+        });
+      });
+      
+      star.addEventListener('mouseout', function() {
+        stars.forEach(s => {
+          if (s.getAttribute('data-rating') <= ratingValue.value) {
+            s.style.color = '#f59e0b';
+          } else {
+            s.style.color = '#e2e8f0';
+          }
+        });
+      });
+    });
+
+    // Feedback form submission
+    document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      if (ratingValue.value === '0') {
+        alert('Please provide a rating before submitting feedback.');
+        return;
+      }
+
+      const feedbackData = {
+        feedbackName: document.getElementById('feedbackName').value,
+        feedbackEmail: document.getElementById('feedbackEmail').value,
+        feedbackCategory: document.getElementById('feedbackCategory').value,
+        feedbackMessage: document.getElementById('feedbackMessage').value,
+        ratingValue: document.getElementById('ratingValue').value,
+        contactPermission: document.getElementById('contactPermission').checked
+      };
+
+      try {
+        const response = await fetch("/submit_feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(feedbackData)
+        });
+
+        const result = await response.json();
+
+        if (result.status === "success") {
+          document.getElementById("successMessage").style.display = "block";
+          this.reset();
+          stars.forEach(star => {
+            star.classList.remove("active");
+            star.style.color = "#e2e8f0";
+          });
+          ratingValue.value = "0";
+        } else {
+          alert(result.message || "Something went wrong!");
+        }
+      } catch (error) {
+        console.error("Error submitting feedback:", error);
+        alert("Network error while submitting feedback.");
+      }
+    });
+
+    // Reset feedback form
+    function resetFeedbackForm() {
+      document.getElementById('successMessage').style.display = 'none';
+      document.getElementById('feedbackForm').reset();
+      
+      // Reset stars
+      stars.forEach(star => {
+        star.classList.remove('active');
+        star.style.color = '#e2e8f0';
+      });
+      ratingValue.value = '0';
+    }
+
+    // Close sidebar when clicking on a link (mobile only)
+    document.querySelectorAll('.sidebar-menu a').forEach(link => {
+      link.addEventListener('click', function() {
+        if (window.innerWidth <= 768) {
+          toggleSidebar();
+        }
+      });
+    });
+
+    // Add event listeners for mobile
+    sidebarToggle.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    // Initial check
+    checkScreenSize();
+
+    // Resize listener
+    window.addEventListener('resize', checkScreenSize);
+  </script>
+</body>
+</html>

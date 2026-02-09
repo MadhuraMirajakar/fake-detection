@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <title>CogniCheck - About</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo2.png') }}">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    :root {
+      --primary: #512da8;
+      --primary-dark: #3d2180;
+      --primary-light: #7e57c2;
+      --secondary: #6c63ff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --light: #f8f9fa;
+      --dark: #2d3748;
+      --text: #4b5563;
+      --border: #e2e8f0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Animated Background */
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .floating-shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      animation: float 15s infinite linear;
+    }
+
+    .shape-1 {
+      width: 300px;
+      height: 300px;
+      top: 10%;
+      left: 5%;
+      animation-delay: 0s;
+    }
+
+    .shape-2 {
+      width: 200px;
+      height: 200px;
+      top: 60%;
+      right: 10%;
+      animation-delay: 5s;
+    }
+
+    .shape-3 {
+      width: 150px;
+      height: 150px;
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-20px) rotate(90deg); }
+      50% { transform: translateY(0) rotate(180deg); }
+      75% { transform: translateY(20px) rotate(270deg); }
+    }
+
+    /* Professional Sidebar - FIXED */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 300px;
+      height: 100%;
+      /* background: rgba(26, 35, 50, 0.95); Added solid background */
+      background: transparent;
+      backdrop-filter: blur(10px);
+      box-shadow: 2px 0 20px rgba(200, 205, 253, 0.6);
+      z-index: 1000;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-header {
+      padding: 25px 20px;
+      /* background: linear-gradient(135deg, var(--primary), var(--secondary)); */
+      background: transparent;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-header .logo {
+      color: white;
+      font-size: 30px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      padding: 20px 0;
+    }
+
+    .sidebar-section {
+      margin-bottom: 25px;
+    }
+
+    .sidebar-section h3 {
+      font-size: 25px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: white;
+      margin: 0 20px 15px;
+      font-weight: 600;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+    }
+
+    .sidebar-menu li {
+      margin-bottom: 5px;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      border-left: 3px solid transparent;
+    }
+
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background: rgba(81, 45, 168, 0.3);
+      color: white;
+      border-left-color: var(--primary);
+    }
+
+    .sidebar-menu a i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .sidebar-footer {
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .sidebar-footer p {
+      font-size: 0.9rem;
+      color: white;
+    }
+
+    /* Mobile Sidebar Toggle */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      width: 50px;
+      height: 50px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(81, 45, 168, 0.3);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Main Content - FIXED */
+    .main-content {
+      flex: 1;
+      margin-left: 400px;
+      padding: 80px 20px 80px;
+      max-width: 1400px;
+      width: calc(100% - 400px);
+      min-height: calc(100vh - 300px);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      color: white;
+      margin-bottom: 80px;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 20px;
+      font-weight: 800;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    /* STANDARDIZED BUTTONS */
+    .nav-btn {
+      background: var(--primary);
+      color: white;
+      font-size: 12px;
+      padding: 10px 20px;
+      border: 2px solid var(--primary);
+      border-radius: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(81, 45, 168, 0.25);
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(81, 45, 168, 0.35);
+    }
+
+    .nav-btn.active {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    .nav-btn.outline {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .nav-btn.outline:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .nav-btn.outline.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .nav-btn:disabled {
+      background: #9ca3af;
+      border-color: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .nav-btn:disabled:hover {
+      transform: none;
+      box-shadow: 0 4px 12px rgba(156, 163, 175, 0.25);
+    }
+
+    .nav-btn.loading {
+      pointer-events: none;
+    }
+
+    .nav-btn.loading .btn-text {
+      visibility: hidden;
+    }
+
+    .nav-btn.loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin: -8px 0 0 -8px;
+      border: 2px solid transparent;
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .nav-btn.outline.loading::after {
+      border-top: 2px solid var(--primary);
+    }
+
+    .nav-btn.small {
+      font-size: 11px;
+      padding: 8px 16px;
+    }
+
+    .nav-btn.large {
+      font-size: 14px;
+      padding: 12px 24px;
+    }
+
+    .nav-btn i {
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-btn:hover i {
+      transform: scale(1.1);
+    }
+
+    /* Feature Cards */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin: 20px 60px;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.4s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 25px;
+      color: white;
+      font-size: 2rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .feature-card p {
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Demo Section */
+    .demo-section {
+      background: white;
+      border-radius: 25px;
+      padding: 60px;
+      margin: 60px ;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+
+    }
+
+    .demo-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .demo-title h2 {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-weight: 800;
+    }
+
+    .demo-title p {
+      font-size: 1.2rem;
+      color: var(--text);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Footer - FIXED */
+    .footer {
+      background: rgba(0, 0, 0, 0.3);
+
+      color: white;
+      padding: 60px 20px 30px;
+      margin-left: 395px;
+      width: calc(100% - 395px);
+      margin-top: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 50px;
+    }
+
+    .footer-section h3 {
+      margin-bottom: 25px;
+      color: #a0aec0;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .footer-section p {
+      margin-bottom: 18px;
+      opacity: 0.8;
+      line-height: 1.6;
+    }
+
+    .footer-section a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .footer-section a:hover {
+      opacity: 1;
+      transform: translateX(5px);
+      color: var(--secondary);
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .footer-social a {
+      width: 45px;
+      height: 45px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      margin-bottom: 0;
+    }
+
+    .footer-social a:hover {
+      background: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 25px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      opacity: 0.7;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Team Section Styles */
+.team-section {
+  background: white;
+  border-radius: 25px;
+  padding: 60px;
+  margin: 60px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  display: block;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.team-title {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.team-title h2 {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 15px;
+  font-weight: 800;
+}
+
+.team-title p {
+  font-size: 1.2rem;
+  color: var(--text);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Changed to exactly 4 columns */
+  gap: 30px; /* Reduced gap to fit better */
+  margin-top: 40px;
+}
+
+.team-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 20px;
+  padding: 25px; /* Reduced padding */
+  text-align: center;
+  transition: all 0.4s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  min-height: 400px; /* Added minimum height for consistency */
+}
+
+.team-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.team-card:hover::before {
+  transform: scaleX(1);
+}
+
+.team-card:hover {
+  transform: translateY(-5px); /* Reduced hover effect */
+  box-shadow: 0 15px 30px rgba(81, 45, 168, 0.15);
+  border-color: var(--primary-light);
+}
+
+.team-photo {
+  width: 120px; /* Reduced photo size */
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--primary);
+  margin: 0 auto 15px;
+  transition: all 0.3s ease;
+}
+
+.team-card:hover .team-photo {
+  border-color: var(--secondary);
+  transform: scale(1.05);
+}
+
+.team-name {
+  font-size: 1.2rem; /* Slightly smaller font */
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 8px;
+}
+
+.team-role {
+  font-size: 0.9rem; /* Smaller font */
+  color: var(--secondary);
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding: 4px 12px;
+  background: rgba(108, 99, 255, 0.1);
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.team-bio {
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 15px;
+  font-size: 0.85rem; /* Smaller font */
+}
+
+.team-social {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.team-social a {
+  width: 35px; /* Smaller social icons */
+  height: 35px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.team-social a:hover {
+  background: var(--secondary);
+  transform: translateY(-3px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
+    gap: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .team-section {
+    padding: 40px 25px;
+    margin: 40px 20px;
+  }
+  
+  .team-grid {
+    grid-template-columns: 1fr; /* 1 column on mobile */
+    gap: 20px;
+  }
+  
+  .team-card {
+    padding: 20px;
+    min-height: auto;
+  }
+  
+  .team-photo {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 350px;
+      }
+      
+      .main-content {
+        margin-left: 350px;
+        width: calc(100% - 350px);
+        min-height: calc(100vh - 280px);
+      }
+      
+      .footer {
+        margin-left: 350px;
+        width: calc(100% - 350px);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        width: 400px;
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 80px 15px 60px;
+        min-height: calc(100vh - 250px);
+      }
+      
+      .footer {
+        margin-left: 0;
+        width: 100%;
+        padding: 40px 20px 20px;
+      }
+      
+      .sidebar-toggle {
+        display: flex;
+      }
+      
+      .sidebar-overlay {
+        display: block;
+      }
+      
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .demo-section {
+        padding: 40px 25px;
+      }
+      
+      .team-section {
+        padding: 40px 25px;
+        margin: 40px 20px;
+      }
+      
+      .team-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      
+      .team-card {
+        padding: 25px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .sidebar-toggle {
+        top: 15px;
+        left: 15px;
+        width: 45px;
+        height: 45px;
+      }
+      
+      .main-content {
+        min-height: calc(100vh - 220px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Animated Background -->
+  <div class="animated-bg">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+  </div>
+
+  <!-- Professional Sidebar Navigation -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="#" class="logo">
+        <i class="fas fa-shield-alt"></i>
+        <span>CogniCheck</span>
+      </a>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-section">
+        <h3>Main Navigation</h3>
+        <ul class="sidebar-menu">
+          <li><a href="{{url_for('home')}}"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="{{url_for('detector')}}"><i class="fas fa-globe"></i> Website Detector</a></li>
+          <li><a href="{{url_for('news_detector')}}"><i class="fas fa-newspaper"></i> News Detector</a></li>
+          <li><a href="{{url_for('phone')}}"><i class="fas fa-newspaper"></i> PhoneBook Search</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>Website Details</h3>
+        <ul class="sidebar-menu">
+          <li><a href="{{ url_for('about') }}"><i class="fas fa-info-circle"></i> About</a></li>
+          <li><a href="{{ url_for('contact') }}"><i class="fas fa-address-card"></i> Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    
+      <div class="sidebar-footer">
+      <ul class="sidebar-menu">
+          <li style="font-size: 25px;"><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt" style="font-size:25px;"></i> Logout</a></li>
+        </ul>
+    </div>
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar Toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1>Advanced Website Security</h1>
+      <p>Protect your digital assets with AI-powered threat detection and real-time security monitoring</p>
+      <div class="hero-buttons">
+        <a href="#" class="nav-btn large">
+          <i class="fas fa-shield-alt"></i>
+          <span class="btn-text">Scan Website</span>
+        </a>
+        <a href="#" class="nav-btn outline large">
+          <i class="fas fa-play-circle"></i>
+          <span class="btn-text">Learn More</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-robot"></i>
+        </div>
+        <h3>AI-Powered Detection</h3>
+        <p>Advanced machine learning algorithms that continuously learn and adapt to new threats in real-time.</p>
+        <div style="margin-top: 20px;">
+          <button class="nav-btn small outline">
+            <i class="fas fa-info"></i>
+            <span class="btn-text">Details</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-bolt"></i>
+        </div>
+        <h3>Real-Time Monitoring</h3>
+        <p>24/7 surveillance of your digital infrastructure with instant alerts for suspicious activities.</p>
+        <div style="margin-top: 20px;">
+          <button class="nav-btn small outline">
+            <i class="fas fa-info"></i>
+            <span class="btn-text">Details</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3>Comprehensive Analytics</h3>
+        <p>Detailed reports and insights into your security posture with actionable recommendations.</p>
+        <div style="margin-top: 20px;">
+          <button class="nav-btn small outline">
+            <i class="fas fa-info"></i>
+            <span class="btn-text">Details</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo-section">
+      <div class="demo-title">
+        <h2>Try Our Security Scanner</h2>
+        <p>Experience the power of CogniCheck with our free website security detector</p>
+      </div>
+      
+      <div style="text-align: center; margin-top: 40px;">
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px;">
+          <button class="nav-btn">
+            <i class="fas fa-rocket"></i>
+            <span class="btn-text">Start Free Trial</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team Section - Always Visible -->
+    <section class="team-section">
+      <div class="team-title">
+        <h2>Meet Our Team</h2>
+        <p>The brilliant minds behind CogniCheck's innovative security solutions</p>
+      </div>
+      
+      <div class="team-grid">
+        <!-- Beeresh Muragannavar -->
+        <div class="team-card">
+          <img src="{{ url_for('static', filename='beeresh.jpg') }}" alt="Beeresh Muragannavar" class="team-photo" onerror="this.src='https://via.placeholder.com/150/667eea/ffffff?text=B'">
+          <h3 class="team-name">Beeresh Muragannavar</h3>
+          <div class="team-role"> AI & Machine Learning Specialist</div>
+          <p class="team-bio">Develops advanced machine learning models for threat detection and pattern recognition. Focuses on AI-driven security solutions.</p>
+          <div class="team-social">
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+          </div>
+        </div>
+
+        <!-- Madhura Mirajakar -->
+        <div class="team-card">
+          <img src="{{ url_for('static', filename='madhura.jpg') }}" alt="Madhura Mirajakar" class="team-photo" onerror="this.src='https://via.placeholder.com/150/764ba2/ffffff?text=M'">
+          <h3 class="team-name">Madhura Mirajakar</h3>
+          <div class="team-role">Backend Architect</div>
+          <p class="team-bio">Leading the technical vision with expertise in system architecture and machine learning algorithms. Ensures robust and scalable backend infrastructure.</p>
+          <div class="team-social">
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+          </div>
+        </div>
+
+        <!-- Darshan Kolekar -->
+        <div class="team-card">
+          <img src="{{ url_for('static', filename='darshan.jpg') }}" alt="Darshan Kolekar" class="team-photo" onerror="this.src='https://via.placeholder.com/150/6c63ff/ffffff?text=D'">
+          <h3 class="team-name">Darshan<br> Kolekar</h3>
+          <div class="team-role">Frontend Developer & UI/UX Designer</div>
+          <p class="team-bio">Creates intuitive and responsive user interfaces. Ensures seamless user experience across all platforms and devices.</p>
+          <div class="team-social">
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+          </div>
+        </div>
+
+        <!-- Basavaraj Harijan -->
+        <div class="team-card">
+          <img src="{{ url_for('static', filename='basavaraj.jpg') }}" alt="Basavaraj Harijan" class="team-photo" onerror="this.src='https://via.placeholder.com/150/10b981/ffffff?text=B'">
+          <h3 class="team-name">Basavaraj Harijan</h3>
+          <div class="team-role">Full Stack Developer</div>
+          <p class="team-bio">Bridges frontend and backend development. Implements core features and ensures system integration and performance optimization.</p>
+          <div class="team-social">
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fas fa-envelope"></i></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <!-- <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About CogniCheck</h3>
+        <p>Leading cybersecurity solutions powered by artificial intelligence to protect businesses from digital threats.</p>
+        <div class="footer-social">
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-github"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <a href="#">Home</a>
+        <a href="#">Website Detector</a>
+        <a href="#">About Us</a>
+        <a href="#">Pricing</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-section">
+        <h3>Resources</h3>
+        <a href="#">Blog</a>
+        <a href="#">Documentation</a>
+        <a href="#">API</a>
+        <a href="#">Security Reports</a>
+        <a href="#">Help Center</a>
+      </div>
+      <div class="footer-section">
+        <h3>Contact Info</h3>
+        <p><i class="fas fa-map-marker-alt"></i> 123 Security Ave, Tech City</p>
+        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+        <p><i class="fas fa-envelope"></i> info@cognicheck.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 CogniCheck. All rights reserved. | Privacy Policy | Terms of Service</p>
+    </div>
+  </footer> -->
+
+  <script>
+    // Mobile sidebar functionality
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('active');
+      sidebarOverlay.classList.toggle('active');
+      document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    }
+
+    // Show/hide mobile toggle based on screen size
+    function checkScreenSize() {
+      if (window.innerWidth <= 768) {
+        sidebarToggle.style.display = 'flex';
+        sidebarOverlay.style.display = 'block';
+        sidebar.classList.remove('active');
+      } else {
+        sidebarToggle.style.display = 'none';
+        sidebarOverlay.style.display = 'none';
+        sidebar.classList.add('active');
+      }
+    }
+
+    // Demo loading button
+    document.querySelector('.nav-btn.loading')?.addEventListener('click', function(e) {
+      e.preventDefault();
+      // This button is already in loading state for demo
+    });
+
+    // Feature card buttons
+    document.querySelectorAll('.feature-card .nav-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        alert('Feature details would be shown here');
+      });
+    });
+
+    // Demo buttons
+    document.querySelectorAll('.demo-section .nav-btn:not(.loading):not(:disabled)').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const text = this.querySelector('.btn-text').textContent;
+        alert(`You clicked: ${text}`);
+      });
+    });
+
+    // Close sidebar when clicking on a link (mobile only)
+    document.querySelectorAll('.sidebar-menu a').forEach(link => {
+      link.addEventListener('click', function() {
+        if (window.innerWidth <= 768) {
+          toggleSidebar();
+        }
+      });
+    });
+
+    // Add event listeners for mobile
+    sidebarToggle.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    // Initial check
+    checkScreenSize();
+
+    // Resize listener
+    window.addEventListener('resize', checkScreenSize);
+  </script>
+</body>
+</html>
